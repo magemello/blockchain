@@ -14,3 +14,5 @@ const block = new Block([
 ]);
 
 console.log('Block', block);
+
+console.log('Hash', block.generateNewHash());

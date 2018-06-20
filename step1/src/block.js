@@ -13,6 +13,12 @@ class Block {
 
         // console.debug('New Block', JSON.stringify(this));
     }
+
+    generateNewHash() {
+        this.nonce++;
+        this.hash = SHA256(this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce).toString();
+        return this.hash;
+    }
 };
 
 export {Block as default};

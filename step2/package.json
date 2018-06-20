@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node server.js",
+    "node1": "nodemon --exec babel-node server.js PORT=9991 127.0.0.1 3001 address1",
+    "node2": "nodemon --exec babel-node server.js PORT=9992 127.0.0.2 3002 address2",
+    "node3": "nodemon --exec babel-node server.js PORT=9993 127.0.0.3 3003 address3",
+    "node4": "nodemon --exec babel-node server.js PORT=9994 127.0.0.4 3004 address4",
+    "websocket": "nodemon --exec babel-node websocket-server.js PORT==9999 127.0.0.10 3010",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

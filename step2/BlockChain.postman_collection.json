@@ -1,0 +1,341 @@
+{
+	"info": {
+		"name": "BlockChain",
+		"_postman_id": "a81a8aaf-b855-3a3d-231a-48e3728c0a76",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:3001/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						""
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "create transaction",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"to\": \"address2\",\n\t\"amount\": 20\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3001/wallet/transaction",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						"wallet",
+						"transaction"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "pending transaction",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.3:3003/pending-transactions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"3"
+					],
+					"port": "3003",
+					"path": [
+						"pending-transactions"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:3001/wallet/balance",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						"wallet",
+						"balance"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "mine",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:3001/mine",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						"mine"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "validate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:3001/ledger/validate",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						"ledger",
+						"validate"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "peers",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:3001/peers",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						"peers"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "peers 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.2:3002/peers",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"2"
+					],
+					"port": "3002",
+					"path": [
+						"peers"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "peers 3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.3:3003/peers",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"3"
+					],
+					"port": "3003",
+					"path": [
+						"peers"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "peers 4",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.4:3004/peers",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"4"
+					],
+					"port": "3004",
+					"path": [
+						"peers"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "validateblock peer2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n            \"timestamp\": 1529253281988,\n            \"data\": [\n                {\n                    \"from\": \"address1\",\n                    \"to\": \"address2\",\n                    \"amount\": 20\n                }\n            ],\n            \"previousHash\": \"00009e19f195be5ec7824e971dabe62789511e05a9b496460cccbf1d1f60ef5e\",\n            \"nonce\": 7730,\n            \"hash\": \"00095de6813c87ac61fc013c0302f71d4c72d8902bda9dec232734001eeac2ce\"\n        }"
+				},
+				"url": {
+					"raw": "http://127.0.0.2:3002/validate-block",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"2"
+					],
+					"port": "3002",
+					"path": [
+						"validate-block"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "pending transaction 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.2:3002/pending-transactions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"2"
+					],
+					"port": "3002",
+					"path": [
+						"pending-transactions"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "pollute ledger",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:3001/pollute-ledger",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3001",
+					"path": [
+						"pollute-ledger"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

@@ -8,8 +8,6 @@ import Node from './src/node.js';
 import P2p from './src/p2p.js';
 import Express from 'express';
 
-const ADDRESS2 = 'address2';
-
 const DIFFICULTY = 2;
 const REWARD = 5;
 const FIRST_NODE = '127.0.0.1';
@@ -21,49 +19,12 @@ const publicKey = process.argv[5] || 'address1';
 
 const app = Express();
 
-let node = new Node(ip, port, publicKey, publicKey + 'private');
-let p2p = new P2p(HOST_WEB_SOCKET, node);
+const node = new Node(ip, port, publicKey, publicKey + 'private');
+const p2p = new P2p(HOST_WEB_SOCKET, node);
+const ledger = new Ledger(REWARD, p2p, node);
+const miner = new Miner(DIFFICULTY, ledger, node, p2p);
 
 initApi(app, port, ip, p2p);
-
-console.log('Transaction', new Transaction(node.address, ADDRESS2, 1000))
-
-const block = new Block([
-    new Transaction(node.address, ADDRESS2, 1000),
-    new Transaction(ADDRESS2, node.address, 2000),
-]);
-
-console.log('Block', block);
-
-console.log('Hash', block.generateNewHash());
-
-const ledger = new Ledger(REWARD);
-
-console.log('Is a valid ledger?', ledger.isValid());
-
-const validBlock = new Block([
-    new Transaction(node.address, ADDRESS2, 1000),
-    new Transaction(ADDRESS2, node.address, 2000),
-], ledger.lastBlock().hash);
-
-validBlock.generateNewHash()
-
-ledger.addBlock(validBlock);
-
-console.log('Ledger', ledger);
-
-console.log('Is still a valid ledger?', ledger.isValid());
-
-const miner = new Miner(DIFFICULTY, ledger, node);
-miner.addTransaction(new Transaction(node.address, ADDRESS2, 50));
-miner.addTransaction(new Transaction(ADDRESS2, node.address, 700));
-
-console.log('Pending Transaction', miner.pendingTransactions);
-miner.mine();
-console.log('Ledger', ledger.getChain());
-console.log('Pending Transaction', miner.pendingTransactions);
-
-
 
 function initApi(app, port, ip, p2p) {
     //REST APIs
@@ -108,4 +69,176 @@ function initApi(app, port, ip, p2p) {
         (error) => {
             console.error(error);
         });
+
+    app.post('/transaction', (request, response) => {
+            console.log('*************POST TRANSACTION******************');
+
+            const body = request.body;
+            const transaction = new Transaction(node.address, body.to, body.amount);
+            p2p.sendMessage('transaction', transaction);
+
+            const responseMessage = {
+                'status': 'New transaction created',
+                'body': {'transaction': transaction}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+
+    app.post('/mine', (request, response) => {
+
+            console.log('******************POST MINE********************');
+
+            const newBlock = miner.mine();
+
+            const responseMessage = {
+                'status': 'Block Mined',
+                'body': {'block': newBlock}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+    app.get('/pending-transactions', (request, response) => {
+
+            console.log('**********GET PENDING TRANSACTIONS*************');
+
+            const responseMessage = {
+                'status': 'Pending Transaction',
+                'body': {'transactions': miner.pendingTransactions}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+
+    app.get('/ledger', (request, response) => {
+
+            console.log('****************GET LEDGER*********************');
+
+            const responseMessage = {
+                'status': 'Ledger',
+                'body': {'ledger': ledger.getChain()}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+    app.get('/ledger/validate', (request, response) => {
+
+            console.log('*****************GET VALIDATE******************');
+
+            const responseMessage = {
+                'status': 'Validated',
+                'body': {'valid': ledger.isValid()}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+
+//DEMO APIs
+
+    app.post('/admin/propose-fake-block', (request, response) => {
+
+            console.log('**************POST PROPOSE BLOCK**************');
+
+            const newBlock = new Block([
+                new Transaction('address2', node.address, 1000),
+                new Transaction('address3', node.address, 2000),
+            ], ledger.lastBlock().hash);
+
+            let hash = newBlock.generateNewHash();
+            while (hash.substring(0, DIFFICULTY) !== Array(DIFFICULTY + 1).join("0")) {
+                hash = newBlock.generateNewHash();
+            }
+
+            p2p.sendMessage('proposeBlock', {
+                'address': node.address,
+                'block': newBlock
+            });
+
+            const responseMessage = {
+                'status': 'Block Proposed',
+                'block': newBlock
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+
+    app.post('/admin/pollute-ledger', (request, response) => {
+
+            console.log('**************POST POLLUTE LEDGER**************');
+
+            ledger.getChain()[0].data = [new Transaction('address2', node.address, 1000)];
+
+            const responseMessage = {
+                'status': 'Ledger Polluted'
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+    app.get("/admin/clean", function (request, response) {
+        for (var i = 0; i < 25; i++)
+            console.log("\n");
+        response.status(200).end();
+    });
+
+    app.post('/admin/reset', (request, response) => {
+
+            console.log('*******************POST RESET********************');
+
+            ledger.createGenesisBlock();
+
+            const responseMessage = {
+                'status': 'Ledger',
+                'body': {'ledger': ledger.getChain()}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
 }

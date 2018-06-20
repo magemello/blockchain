@@ -109,6 +109,7 @@ class P2p {
             })
             .end((data) => {
                 if (data && data.body) {
+                    console.log(data.body);
                     const peers = data.body.body.peers;
                     peers.forEach((peer) => {
                         if (peer.ip) {

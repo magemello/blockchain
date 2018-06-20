@@ -7,6 +7,7 @@ import Miner from './src/miner.js';
 import Node from './src/node.js';
 import P2p from './src/p2p.js';
 import Express from 'express';
+import Wallet from './src/wallet.js';
 
 const DIFFICULTY = 2;
 const REWARD = 5;
@@ -22,7 +23,8 @@ const app = Express();
 const node = new Node(ip, port, publicKey, publicKey + 'private');
 const p2p = new P2p(HOST_WEB_SOCKET, node);
 const ledger = new Ledger(REWARD, p2p, node);
-const miner = new Miner(DIFFICULTY, ledger, node, p2p);
+const wallet = new Wallet(p2p, node, ledger);
+const miner = new Miner(DIFFICULTY, ledger, node, p2p, wallet);
 
 initApi(app, port, ip, p2p);
 
@@ -70,16 +72,33 @@ function initApi(app, port, ip, p2p) {
             console.error(error);
         });
 
-    app.post('/transaction', (request, response) => {
+    app.post('/wallet/transaction', (request, response) => {
             console.log('*************POST TRANSACTION******************');
 
             const body = request.body;
-            const transaction = new Transaction(node.address, body.to, body.amount);
-            p2p.sendMessage('transaction', transaction);
+            const transaction = wallet.createTransaction(body.to, body.amount);
 
             const responseMessage = {
                 'status': 'New transaction created',
                 'body': {'transaction': transaction}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+
+    app.get('/wallet/balance', (request, response) => {
+
+            console.log('*****************GET BALANCE*******************');
+
+            const responseMessage = {
+                'status': 'Wallet balance',
+                'body': {'balance': wallet.getBalance()}
             };
 
             console.log(JSON.stringify(responseMessage));
@@ -216,6 +235,28 @@ function initApi(app, port, ip, p2p) {
             console.error(error);
         });
 
+    app.post('/admin/ico', (request, response) => {
+
+            console.log('*******************POST ICO********************');
+
+            const body = request.body;
+            const transaction = new Transaction('system-ICO', body.to, body.amount)
+            p2p.sendMessage('transaction', transaction);
+
+            const responseMessage = {
+                'status': 'New ICO',
+                'body': {'transaction': transaction}
+            };
+
+            console.log(JSON.stringify(responseMessage));
+
+            response.status(200).json(responseMessage).end();
+        },
+        (error) => {
+            console.error(error);
+        });
+
+
     app.get("/admin/clean", function (request, response) {
         for (var i = 0; i < 25; i++)
             console.log("\n");
@@ -227,6 +268,7 @@ function initApi(app, port, ip, p2p) {
             console.log('*******************POST RESET********************');
 
             ledger.createGenesisBlock();
+            miner.pendingTransactions = [];
 
             const responseMessage = {
                 'status': 'Ledger',

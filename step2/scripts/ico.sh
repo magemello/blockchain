@@ -6,7 +6,7 @@ if [ -n "$1" ]
     port=$1
 fi
 
-to="address2"
+to="address1"
 if [ -n "$2" ]
   then
     to=$2
@@ -19,5 +19,5 @@ if [ -n "$3" ]
 fi
 
 iden=$(echo $port-3000 | bc)
-curl -v -H 'Content-Type: application/json' -X POST -d '{"to": "'$to'","amount": '$amount'}' http://127.0.0.$iden:$port/wallet/transaction
+curl -v -H 'Content-Type: application/json' -X POST -d '{"to": "'$to'","amount": '$amount'}' http://127.0.0.$iden:$port/admin/ico
 echo -e "\n"

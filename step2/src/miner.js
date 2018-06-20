@@ -5,11 +5,12 @@ import SHA256 from 'crypto-js/sha256';
 
 class Miner {
 
-    constructor(difficultyLevel, ledger, node, p2p) {
+    constructor(difficultyLevel, ledger, node, p2p, wallet) {
         this.difficultyLevel = difficultyLevel;
         this.ledger = ledger;
         this.node = node;
         this.p2p = p2p;
+        this.wallet = wallet;
 
         this.pendingTransactions = [];
         this.proposedBlocks = [];
@@ -79,7 +80,13 @@ class Miner {
             const message = JSON.parse(data.data);
             if (message.type === 'transaction') {
                 //we should validate the signature of the transaction here...but we don't cover it in this example
-                this.pendingTransactions.push(message.body);
+                if (message.body.from != 'system-ICO' && message.body.from != 'mining-system-coinbase-transaction'
+                    && this.wallet.getBalance(message.body.from) < message.body.amount) {
+                    console.log('New Transaction refuse', message.body);
+                } else {
+                    console.log('New Transaction accepted', message.body);
+                    this.pendingTransactions.push(message.body);
+                }
             }
         });
     }
@@ -121,6 +128,11 @@ class Miner {
             .filter(pending => pending.to === transaction.to
                 && pending.from === transaction.from
                 && pending.amount === transaction.amount);
+
+        if (transaction.from != 'system-ICO' && transaction.from != 'mining-system-coinbase-transaction'
+            && this.wallet.getBalance(transaction.from) < transaction.amount) {
+            return false;
+        }
 
         if (isValidTransaction.length === 0) {
             return false;

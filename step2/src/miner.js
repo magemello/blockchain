@@ -5,10 +5,10 @@ import Transaction from './transaction.js';
 
 class Miner {
 
-    constructor(difficultyLevel, ledger, address) {
+    constructor(difficultyLevel, ledger, node) {
         this.difficultyLevel = difficultyLevel;
         this.ledger = ledger;
-        this.address = address;
+        this.node = node;
 
         this.pendingTransactions = [];
         this.proposedBlocks = [];
@@ -30,7 +30,7 @@ class Miner {
         }
 
         const reward = this.ledger.addBlock(newBlock);
-        this.pendingTransactions = [new Transaction('mining-system-coinbase-transaction', this.address, reward)];
+        this.pendingTransactions = [new Transaction('mining-system-coinbase-transaction', this.node.address, reward)];
 
         console.log('....Mining Done....');
 

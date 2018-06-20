@@ -5,8 +5,9 @@ import SHA256 from 'crypto-js/sha256';
 
 class Ledger {
 
-    constructor() {
+    constructor(amountReward) {
         this.chain = [];
+        this.amountReward = amountReward;
 
         this.onInit();
         // console.debug('New Ledger', JSON.stringify(this));
@@ -58,6 +59,7 @@ class Ledger {
 
     addBlock(block) {
         this.chain.push(block);
+        return this.amountReward;
     }
 };
 

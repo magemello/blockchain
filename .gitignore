@@ -3,6 +3,7 @@ target/
 .sysdist
 bb*
 node_modules/
+package-lock.json
 
 ### STS ###
 .apt_generated
